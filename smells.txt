@@ -1,2 +1,2 @@
 1. This type of code smell is duplicated code and can be refactored by extracting the duplicated code into a new method and calling the method in place of the extracted code.
-
+3. This type of code smell is feature envy and can be refactored by the move method (ie move the method to a more appropriate class).
