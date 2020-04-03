@@ -258,11 +258,12 @@ public class Connection {
         out.close();
     }
 
-    public KeyPair generateKeyPairWithSpec(DHParameterSpec par) {
-        KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
-        dh.initialize(par);
-        keypair = dh.generateKeyPair();
+    public KeyPair generateKeyPairWithSpec(DHParameterSpec spec) {
+       KeyPair keypair;
+       KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
+       dh.initialize(param);
+       keypair = dh.generateKeyPair();
 
-        return keypair;
+       return keypair;
     }
 }
