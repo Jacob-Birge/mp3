@@ -44,10 +44,12 @@ import java.io.OutputStream;
 import java.net.Socket;
 import java.security.AlgorithmParameterGenerator;
 import java.security.GeneralSecurityException;
+import java.security.InvalidAlgorithmParameterException;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.Signature;
 import java.security.interfaces.DSAPublicKey;
@@ -153,7 +155,8 @@ public class Connection {
             AlgorithmParameterGenerator paramGen = AlgorithmParameterGenerator.getInstance("DH");
             paramGen.init(keySize);
 
-            keyPair = generateKeyPairWithSpec(paramGen.generateParameters().getParameterSpec(DHParameterSpec.class));
+            DHParameterSpec parameterSpec = paramGen.generateParameters().getParameterSpec(DHParameterSpec.class);
+            keyPair = generateKeyPairWithSpec(parameterSpec);
 
             // send a half and get a half
             writeKey(keyPair.getPublic());
@@ -161,7 +164,8 @@ public class Connection {
         } else {
             otherHalf = KeyFactory.getInstance("DH").generatePublic(readKey());
 
-            keyPair = generateKeyPairWithSpec(((DHPublicKey) otherHalf).getParams());
+            DHParameterSpec params = ((DHPublicKey) otherHalf).getParams();
+            keyPair = generateKeyPairWithSpec(params);
 
             // send a half and get a half
             writeKey(keyPair.getPublic());
@@ -173,6 +177,15 @@ public class Connection {
 
         return ka;
     }
+
+	private KeyPair generateKeyPairWithSpec(DHParameterSpec parameterSpec)
+			throws NoSuchAlgorithmException, InvalidAlgorithmParameterException {
+		KeyPair keyPair;
+		KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
+		dh.initialize(parameterSpec);
+		keyPair = dh.generateKeyPair();
+		return keyPair;
+	}
 
     /**
      * Upgrades a connection with transport encryption by the specified symmetric cipher.
@@ -258,12 +271,5 @@ public class Connection {
         out.close();
     }
 
-    public KeyPair generateKeyPairWithSpec(DHParameterSpec spec) {
-       KeyPair keypair;
-       KeyPairGenerator dh = KeyPairGenerator.getInstance("DH");
-       dh.initialize(spec);
-       keypair = dh.generateKeyPair();
-
-       return keypair;
-    }
+   
 }
