@@ -1,3 +1,4 @@
 1. This type of code smell is duplicated code and can be refactored by extracting the duplicated code into a new method and calling the method in place of the extracted code.
 3. This type of code smell is feature envy and can be refactored by the move method (ie move the method to a more appropriate class).
 4. You could label the for loop at line 234 as "outer" and add a for loop (to run four times) at line 239 that contains the code in lines 249-254, replacing the "break;" statement with "break outer;".
+6. DualOutputStream.java and ForkOutputStream.java are duplicate classes. The only apparent difference is that DualOutputStream defines lhs and rhs on one line, but ForkOutputStream defines them on seperate lines.
